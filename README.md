@@ -1,4 +1,5 @@
 # 具体文件夹的内容以该路径的结果为准
+```
 myproject/
 ├── myproject/
 │   ├── __init__.py
@@ -23,15 +24,20 @@ myproject/
 │   ├── result/     # 生成的结果可以储存在这
 ├── code            # 用于分析的代码
 ├── manage.py
+```
 
-
+```
 pip install django-ninja
 django-admin startproject myproject # 创建一个django项目
+```
 
 # 创建第一个应用
+```
 django-admin startapp app01  
+```
 
 # 在 INSTALLED_APPS 中添加 app01 和 django_rq
+```
 import os 
 INSTALLED_APPS = [
     ...
@@ -69,8 +75,10 @@ LOGGING = {        # 添加debug信息
         },
     },
 }
+```
 
 # 修改app01/models.py
+```
 from django.db import models
 
 class DataFile(models.Model):
@@ -80,8 +88,9 @@ class DataFile(models.Model):
 
     def __str__(self):
         return self.name
-
+```
 # 创建app01/forms.py
+```
 from django import forms
 from .models import DataFile
 
@@ -89,8 +98,9 @@ class DataFileForm(forms.ModelForm):
     class Meta:
         model = DataFile
         fields = ['file']
-
+```
 # 创建 app01/views.py 定义内部分析过程（需要修改）
+```
 import os
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -159,8 +169,11 @@ def result(request, job_id):
     else:
         result = 'Your analysis is in progress...'
     return render(request, 'result.html', {'result': result})
+```
+
 
 # 创建app01/urls.py
+```
 from django.urls import path
 from . import views
 
@@ -168,8 +181,9 @@ urlpatterns = [
     path('', views.upload_file, name='upload_file'),
     path('result/<str:job_id>/', views.result, name='result'),
 ]
-
+```
 # 在项目的myproject/urls.py中包含应用的URL
+```
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -182,8 +196,9 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+```
 # 创建 app01/templates 文件夹，并在其中创建 upload.html 和 result.html
+```
 ## upload.html
 
 <!DOCTYPE html>
@@ -212,19 +227,23 @@ if settings.DEBUG:
     <p>{{ result }}</p>
 </body>
 </html>
-
+```
 # 对app/model字段进行了修改，所以需要进行迁移更新
+```
 python manage.py makemigrations app01
 python manage.py migrate
-
+```
 # 启动redis-server服务器, D:\Software\Redis
+```
 D:\Software\Redis\redis-server.exe
-
+```
 # 启动RQ worker
+```
 # pip install rq==1.14  # window系统启动
 # pip install git+https://github.com/michaelbrooks/rq-win.git#egg=rq-win  # window系统启动
 python manage.py rqworker default # linux系统启动
-
+```
 # 运行Django项目
+```
 python manage.py runserver
-
+```
